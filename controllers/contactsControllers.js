@@ -1,11 +1,58 @@
-import contactsService from "../services/contactsServices.js";
+const contactsService = require("../services/contactsServices.js");
+const { HttpError, ctrlWrapper } = require("../helpers/index.js");
 
-export const getAllContacts = (req, res) => {};
+const getAllContacts = ctrlWrapper(async (req, res) => {
+  const result = await contactsService.listContacts();
+  res.status(200).json(result);
+});
 
-export const getContactById = (req, res) => {};
+const getContactById = ctrlWrapper(async (req, res) => {
+  const { id } = req.params;
+  const result = await contactsService.getContactById(id);
 
-export const deleteContact = (req, res) => {};
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
 
-export const createContact = (req, res) => {};
+  res.status(200).json(result);
+});
 
-export const updateContact = (req, res) => {};
+const deleteContact = ctrlWrapper(async (req, res) => {
+  const { id } = req.params;
+  const result = await contactsService.removeContact(id);
+
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.status(200).json(result);
+});
+
+const createContact = ctrlWrapper(async (req, res) => {
+  const result = await contactsService.addContact(req.body);
+
+  res.status(201).json(result);
+});
+
+const updateContact = ctrlWrapper(async (req, res) => {
+  if (!req.body) {
+    throw HttpError(400, "Body must have at least one field");
+  }
+
+  const { id } = req.params;
+  const result = await contactsService.updateContactById(id, req.body);
+
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.status(200).json(result);
+});
+
+module.exports = {
+  getAllContacts,
+  getContactById,
+  deleteContact,
+  createContact,
+  updateContact,
+};
