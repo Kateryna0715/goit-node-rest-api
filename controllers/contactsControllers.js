@@ -35,7 +35,7 @@ const createContact = ctrlWrapper(async (req, res) => {
 });
 
 const updateContact = ctrlWrapper(async (req, res) => {
-  if (!req.body) {
+  if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Body must have at least one field");
   }
 

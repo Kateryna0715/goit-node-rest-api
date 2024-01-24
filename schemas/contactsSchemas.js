@@ -1,17 +1,15 @@
 const Joi = require("joi");
 
 const createContactSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
   phone: Joi.string().required(),
-  //phone: Joi.number.pattern(new RegExp("^[0-9]{10}$")).required(),
 });
 
 const updateContactSchema = Joi.object({
-  name: Joi.string(),
+  name: Joi.string().min(3),
   email: Joi.string().email(),
   phone: Joi.string(),
-  // phone: Joi.string().pattern(new RegExp("^[0-9]{10}$")),
 });
 
 module.exports = {
