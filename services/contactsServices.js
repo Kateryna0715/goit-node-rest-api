@@ -1,16 +1,12 @@
-const { nanoid } = require("nanoid");
-
-const fs = require("fs/promises");
-const path = require("path");
-const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
-
+const { HttpError } = require("../helpers");
+const Contact = require("../models/contactModel.js");
 require("colors");
 
 const listContacts = async () => {
   try {
-    const data = await fs.readFile(contactsPath);
+    const data = await Contact.find();
 
-    return JSON.parse(data);
+    return data;
   } catch (error) {
     console.log(`Something went wrong! ${error.message}`.red);
   }
@@ -18,8 +14,7 @@ const listContacts = async () => {
 
 const getContactById = async (contactId) => {
   try {
-    const data = await listContacts();
-    const contactById = data.find((contact) => contact.id === contactId);
+    const contactById = Contact.findById(contactId);
 
     if (!contactById) {
       console.log(`Contact with id: ${contactId} doesn't exist`.red);
@@ -34,16 +29,7 @@ const getContactById = async (contactId) => {
 
 const removeContact = async (contactId) => {
   try {
-    const data = await listContacts();
-    const index = data.findIndex((contact) => contact.id === contactId);
-
-    if (index === -1) {
-      console.log(`ID: ${contactId} is not valid!`.red);
-      return null;
-    }
-
-    const [removedContact] = data.splice(index, 1);
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+    const removedContact = Contact.findByIdAndDelete(contactId);
 
     return removedContact;
   } catch (error) {
@@ -51,27 +37,16 @@ const removeContact = async (contactId) => {
   }
 };
 
-const addContact = async ({ name, email, phone }) => {
+const addContact = async (data) => {
   try {
-    const data = await listContacts();
+    const isExists = await Contact.exists({ email: data.email });
 
-    const isExist = data.find((contact) => contact.email === email);
-
-    if (isExist) {
-      console.log("Contact with this email is already exist!".red);
+    if (isExists) {
+      console.log("Contact is already exist!".red);
 
       return null;
     }
-    const newContact = {
-      id: nanoid(),
-      name,
-      email,
-      phone,
-    };
-
-    data.push(newContact);
-
-    await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+    const newContact = await Contact.create(data);
 
     return newContact;
   } catch (error) {
@@ -81,18 +56,25 @@ const addContact = async ({ name, email, phone }) => {
 
 const updateContactById = async (contactId, data) => {
   try {
-    const contacts = await listContacts();
-    const index = contacts.findIndex((contact) => contact.id === contactId);
+    const updatedContact = Contact.findByIdAndUpdate(contactId, data, {
+      new: true,
+    });
 
-    if (index === -1) {
-      console.log(`ID: ${contactId} is not valid!`.red);
-      return null;
-    }
+    return updatedContact;
+  } catch (error) {
+    console.log(`Something went wrong! ${error.message}`.red);
+  }
+};
 
-    contacts[index] = { ...contacts[index], ...data };
-    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+const updateStatus = async (contactId, status) => {
+  try {
+    const contact = await Contact.findById(contactId);
+    contact.favorite = status;
+    const updatedContact = Contact.findByIdAndUpdate(contactId, contact, {
+      new: true,
+    });
 
-    return contacts[index];
+    return updatedContact;
   } catch (error) {
     console.log(`Something went wrong! ${error.message}`.red);
   }
@@ -104,4 +86,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContactById,
+  updateStatus,
 };

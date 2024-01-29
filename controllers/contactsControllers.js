@@ -1,13 +1,15 @@
 const contactsService = require("../services/contactsServices.js");
 const { HttpError, ctrlWrapper } = require("../helpers/index.js");
 
-const getAllContacts = ctrlWrapper(async (req, res) => {
+const getAllContacts = async (req, res) => {
   const result = await contactsService.listContacts();
-  res.status(200).json(result);
-});
 
-const getContactById = ctrlWrapper(async (req, res) => {
+  res.status(200).json(result);
+};
+
+const getContactById = async (req, res) => {
   const { id } = req.params;
+
   const result = await contactsService.getContactById(id);
 
   if (!result) {
@@ -15,9 +17,9 @@ const getContactById = ctrlWrapper(async (req, res) => {
   }
 
   res.status(200).json(result);
-});
+};
 
-const deleteContact = ctrlWrapper(async (req, res) => {
+const deleteContact = async (req, res) => {
   const { id } = req.params;
   const result = await contactsService.removeContact(id);
 
@@ -26,15 +28,15 @@ const deleteContact = ctrlWrapper(async (req, res) => {
   }
 
   res.status(200).json(result);
-});
+};
 
-const createContact = ctrlWrapper(async (req, res) => {
+const createContact = async (req, res) => {
   const result = await contactsService.addContact(req.body);
 
   res.status(201).json(result);
-});
+};
 
-const updateContact = ctrlWrapper(async (req, res) => {
+const updateContact = async (req, res) => {
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Body must have at least one field");
   }
@@ -47,12 +49,27 @@ const updateContact = ctrlWrapper(async (req, res) => {
   }
 
   res.status(200).json(result);
-});
+};
+
+const updateStatusContact = async (req, res) => {
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "You must input favorite status: true or false");
+  }
+  const { id } = req.params;
+  const { favorite } = req.body;
+
+  const updatedContact = await contactsService.updateStatus(id, favorite);
+  if (!updatedContact) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(200).json(updatedContact);
+};
 
 module.exports = {
-  getAllContacts,
-  getContactById,
-  deleteContact,
-  createContact,
-  updateContact,
+  getAllContacts: ctrlWrapper(getAllContacts),
+  getContactById: ctrlWrapper(getContactById),
+  deleteContact: ctrlWrapper(deleteContact),
+  createContact: ctrlWrapper(createContact),
+  updateContact: ctrlWrapper(updateContact),
+  updateStatusContact: ctrlWrapper(updateStatusContact),
 };
