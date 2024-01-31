@@ -1,5 +1,5 @@
 const express = require("express");
-const { validateBody, isValidId } = require("../middlewares");
+const { validateBody, isValidId, isExistContact } = require("../middlewares");
 const {
   createContactSchema,
   updateContactSchema,
@@ -15,7 +15,12 @@ contactsRouter.get("/:id", isValidId, ctrl.getContactById);
 
 contactsRouter.delete("/:id", isValidId, ctrl.deleteContact);
 
-contactsRouter.post("/", validateBody(createContactSchema), ctrl.createContact);
+contactsRouter.post(
+  "/",
+  validateBody(createContactSchema),
+  isExistContact,
+  ctrl.createContact
+);
 
 contactsRouter.put(
   "/:id",

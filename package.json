@@ -1,12 +1,13 @@
 {
   "name": "goit-node-rest-api",
   "scripts": {
-    "start": "node ./app.js",
-    "dev": "nodemon ./app.js"
+    "start": "cross-env NODE_ENV=production node ./app.js",
+    "dev": "cross-env nodemon NODE_ENV=development ./app.js"
   },
   "dependencies": {
     "colors": "^1.4.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "joi": "^17.11.0",

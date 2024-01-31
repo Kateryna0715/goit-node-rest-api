@@ -37,7 +37,7 @@ const createContact = async (req, res) => {
 };
 
 const updateContact = async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
+  if (!Object.keys(req.body).length) {
     throw HttpError(400, "Body must have at least one field");
   }
 
@@ -52,17 +52,17 @@ const updateContact = async (req, res) => {
 };
 
 const updateStatusContact = async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
+  if (!Object.keys(req.body).length) {
     throw HttpError(400, "You must input favorite status: true or false");
   }
   const { id } = req.params;
   const { favorite } = req.body;
 
-  const updatedContact = await contactsService.updateStatus(id, favorite);
-  if (!updatedContact) {
+  const result = await contactsService.updateStatus(id, favorite);
+  if (!result) {
     throw HttpError(404, "Not found");
   }
-  res.status(200).json(updatedContact);
+  res.status(200).json(result);
 };
 
 module.exports = {

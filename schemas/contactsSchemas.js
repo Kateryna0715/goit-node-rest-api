@@ -15,7 +15,7 @@ const updateContactSchema = Joi.object({
 });
 
 const updateStatus = Joi.object({
-  favorite: Joi.boolean().default(false),
+  favorite: Joi.boolean().required(),
 });
 
 module.exports = {

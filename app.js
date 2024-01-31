@@ -1,25 +1,16 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
-require("dotenv").config();
+require("colors");
 
-const { mongoUrl, port } = require("./configs/serverConfig.js");
+const path = require("path");
+const configPath = path.join(__dirname, ".env");
+require("dotenv").config({ path: configPath });
+
 const contactsRouter = require("./routes/contactsRouter.js");
+const connectDb = require("./config/connectDB.js");
 
 const app = express();
-
-mongoose.Promise = global.Promise;
-
-mongoose
-  .connect(mongoUrl)
-  .then(() => {
-    console.log("Database connection successful");
-  })
-  .catch((err) => {
-    console.log(err);
-    process.exit(1);
-  });
 
 app.use(morgan("tiny"));
 app.use(cors());
@@ -35,6 +26,10 @@ app.use((err, req, res, next) => {
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
-app.listen(port, () => {
-  console.log("Server is running. Use our API on port: 3000");
+
+connectDb();
+
+const { PORT } = process.env;
+app.listen(PORT, () => {
+  console.log(`Server is running. Use our API on port: ${PORT}`.green.bold);
 });

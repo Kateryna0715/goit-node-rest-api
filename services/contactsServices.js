@@ -1,6 +1,4 @@
-const { HttpError } = require("../helpers");
 const Contact = require("../models/contactModel.js");
-require("colors");
 
 const listContacts = async () => {
   try {
@@ -39,13 +37,6 @@ const removeContact = async (contactId) => {
 
 const addContact = async (data) => {
   try {
-    const isExists = await Contact.exists({ email: data.email });
-
-    if (isExists) {
-      console.log("Contact is already exist!".red);
-
-      return null;
-    }
     const newContact = await Contact.create(data);
 
     return newContact;
@@ -70,7 +61,7 @@ const updateStatus = async (contactId, status) => {
   try {
     const contact = await Contact.findById(contactId);
     contact.favorite = status;
-    const updatedContact = Contact.findByIdAndUpdate(contactId, contact, {
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, contact, {
       new: true,
     });
 
