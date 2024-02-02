@@ -4,8 +4,8 @@ const {
   createContactSchema,
   updateContactSchema,
   updateStatus,
-} = require("../schemas/contactsSchemas.js");
-const ctrl = require("../controllers/contactsControllers.js");
+} = require("../schemas");
+const ctrl = require("../controllers");
 
 const contactsRouter = express.Router();
 

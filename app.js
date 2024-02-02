@@ -7,8 +7,8 @@ const path = require("path");
 const configPath = path.join(__dirname, ".env");
 require("dotenv").config({ path: configPath });
 
-const contactsRouter = require("./routes/contactsRouter.js");
-const connectDb = require("./config/connectDB.js");
+const contactsRouter = require("./routes");
+const connectDb = require("./config");
 
 const app = express();
 
