@@ -7,7 +7,7 @@ const path = require("path");
 const configPath = path.join(__dirname, ".env");
 require("dotenv").config({ path: configPath });
 
-const contactsRouter = require("./routes");
+const { contactsRouter, authRouter } = require("./routes");
 const connectDb = require("./config");
 
 const app = express();
@@ -16,6 +16,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/users", authRouter);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) => {
