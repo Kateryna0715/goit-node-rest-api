@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const multer = require("multer");
 require("colors");
 
 const path = require("path");
@@ -16,7 +17,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", authRouter);
+app.use("/users", authRouter);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) => {
