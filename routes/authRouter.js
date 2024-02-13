@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { validateBody, isUserAuthenticate } = require("../middlewares");
+const { validateBody, isUserAuthenticate, upload } = require("../middlewares");
 const { joiUserSchema } = require("../schemas");
 const { ctrlAuth } = require("../controllers");
 
@@ -28,4 +28,10 @@ authRouter.patch(
   ctrlAuth.updateUserSubscription
 );
 
+authRouter.patch(
+  "/avatars",
+  isUserAuthenticate,
+  upload.single("avatar"),
+  ctrlAuth.updateAvatar
+);
 module.exports = authRouter;
