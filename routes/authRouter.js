@@ -11,6 +11,14 @@ authRouter.post(
   ctrlAuth.registerUser
 );
 
+authRouter.get("/verify/:verificationToken", ctrlAuth.verificationUser);
+
+authRouter.post(
+  "/verify",
+  validateBody(joiUserSchema.emailSchema),
+  ctrlAuth.resendVerifyEmail
+);
+
 authRouter.post(
   "/login",
   validateBody(joiUserSchema.loginSchema),
@@ -34,4 +42,5 @@ authRouter.patch(
   upload.single("avatar"),
   ctrlAuth.updateAvatar
 );
+
 module.exports = authRouter;
