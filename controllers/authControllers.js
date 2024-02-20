@@ -54,9 +54,11 @@ const verificationUser = async (req, res) => {
   if (!verifyUser) {
     throw HttpError(404, "User not found");
   }
-  verifyUser.verificationToken = null;
-  verifyUser.verify = true;
-  await verifyUser.save();
+
+  await User.findByIdAndUpdate(verifyUser._id, {
+    verify: true,
+    verificationToken: null,
+  });
   res.status(200).json({
     message: "Verification successful",
   });
@@ -76,7 +78,6 @@ const resendVerifyEmail = async (req, res) => {
     to: email,
     subject: "Verify email",
     html: `<a target='_blank' href='${BASE_URL}/users/verify/${user.verificationToken}'>Click to verify email</a>`,
-    text: "Please verify youre email",
   };
 
   await sendEmail(verifyEmail);

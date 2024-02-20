@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-// require("dotenv").config();
 
 const sendEmail = async (data) => {
   const nodemailerConfig = {
@@ -17,7 +16,7 @@ const sendEmail = async (data) => {
 
   transporter
     .sendMail(emailOptions)
-    .then(() => console.log("Email send success!"))
+    .then(() => console.log("Email send success!".green.bold))
     .catch((err) => console.log(err.message));
 };
 
